@@ -24,10 +24,30 @@ Advantages of Boc:
 - Know and understand every state of your app
 - Work on a single, stable, popular and effective BLoC codebase
 
-## Core BloC concepts
+## Core BloC concepts !important
+The first thing to master is `streams` as they are the foundation of BLoC
 - Streams
 - Cubits
 - BLoCs
+
+Streams: `async*` is how to create an `Async Generator Function` and to send a piece of data from the stream you use the `yield` keyword. An async generator sends async data
+```dart
+Stream<int> boatStream() async* {
+  for (int i = 1; i<=10; i++;) {
+    print("SENT boat no. " + i.toString());
+    await Future.delayed(Duration(seconds: 2));
+    yield i;
+  }
+}
+
+void main(List<String> args) async {
+  Stream<int> stream = boatStream();
+
+  stream.listen((receivedData) {
+    print("RECEIVED boat no. " + receivedData.toString());
+  });
+}
+```
 
 ## Flutter BLoC concepts
 - BlocProvider

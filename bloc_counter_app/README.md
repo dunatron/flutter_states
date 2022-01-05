@@ -48,6 +48,28 @@ void main(List<String> args) async {
   });
 }
 ```
+We use the listen method to wait for incoming stream data
+
+UI - Cubit - Data  
+UI - Bloc - Data
+
+The UI recieves states from the cubit or bloc.  
+The cubit or bloc can make a request to recieve data and return some sort of response.
+In Cubit  the UI submits a function to call the cubit and return states.  
+In Bloc the UI emits events which will return state to the UI.  
+Both cubit and bloc can communicate with the outside data layer
+A Cubit is a minimal version of a Bloc or a Bloc is an enhanced version of cubit.  
+Bloc actually extends Cubit.
+
+`Cubit` is a special kind of stream component which is based on some functions which are called from the UI, functions that rebuild the UI by emmiting different states on a stream. Note the functions the UI emits to a cubit are not Streams unlike a bloc where it not only emits a stream of states but also recieves a stream of events.  
+
+`BLoC` emits a stream of states and also recieves a stream of events.  
+You can think of BLoC as the brain of an advanced and complex component from our app.  
+The user can interact with the app and cause an event stream to be emitted to the BloC then inside the BLoc there qill be a required `mapEventToState` function which will take the event and convert into a state so that the UI can rebuild  
+
+Technically you will want a Cubit or Bloc for every feature of your app.  
+
+The main difference between a Bloc and a Cubit is how it receives input from the UI. 
 
 ## Flutter BLoC concepts
 - BlocProvider
@@ -106,3 +128,6 @@ Create dart data classes easily, fast and without writing boilerplate
 Fix Dart/Flutter's imports
 - Firebase Explorer `jsayol`  
 Visual Studio Code extension to explore and manager your Firebase 
+
+
+##Resources

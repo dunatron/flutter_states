@@ -67,16 +67,118 @@ Bloc actually extends Cubit.
 You can think of BLoC as the brain of an advanced and complex component from our app.  
 The user can interact with the app and cause an event stream to be emitted to the BloC then inside the BLoc there qill be a required `mapEventToState` function which will take the event and convert into a state so that the UI can rebuild  
 
+`When to use a Bloc or Cubit`  
 Technically you will want a Cubit or Bloc for every feature of your app.  
 
+`Bloc vs Cubit`  
 The main difference between a Bloc and a Cubit is how it receives input from the UI. 
+
+You could pretty much use Bloc and forget about cubit in your app, however a Bloc might be a bit overkill for say a simple counter app/feature  
+
+The Bloc can be thought of the main brain of the app/feature where a cubit can be used to optimize  
+
+Recomendation is to start with a cubit and expand it into a bloc if it is needed
 
 ## Flutter BLoC concepts
 - BlocProvider
 - BlocBuilder
 - BlocListner
-- MultiBlocProvider
-- MultiBlocListner
+- BlocConsumer
+- MultiBlocListener, MultiBlocProvider, MultiRepositoryProvider
+
+`BlocProvider`  
+A flutter widget which creates and provides a Bloc to all of its children.  
+This is also known as a dependency injection widget so that a single instance of a bloc can be provided to multiple widgets within a subtree and all the widgets within now depend on it  
+```dart
+// The widget to provide the the bloc to the subtree
+BlocProvider(
+  create: (BuildContext context) => BlockA(),
+  child: ChildA(),
+);
+
+// accessing
+BlocProvider.of<BlocA>(context);
+// Or
+context.bloc<BlocA>();
+```
+By default, BlocProvider creates the bloc lazily  
+
+It will create the block when it sees something like  
+`BlocProvider.of<BlocA>(context)`  
+
+This means that there won't be a ton of Bloc creation at the start  
+
+This can of course be overriden to create the Bloc as soon as possible `lazy:false`
+```dart
+BlocProvider(
+  lazy: false,
+  create: (BuildContext context) => BlocA(),
+  child: ChildA(),
+);
+```
+When flutter changes screens via navigation it will loose the context and therefore will not have the same instance of the Bloc it had before to pass the instance we need to use `BlocProvider.value()` 
+```
+BlocProvider.value(
+  value: BlocProvider.of<BlocA>(context),
+  child: AnotherScreen(),
+);
+```
+Since the only instance of BlocA was created with `BlocProvider`, it will get automatically closed by the BlocProvider!  
+
+Providing it to the second page (using `BlocProvider.value`), won't close the only instance of the bloc when the second page gets destroyed!  
+
+This is because the instance may still be needed in the page above, in the ancestor tree.  
+
+However, the instance will be closed when needed, because of the way it was created in the first place (by using `BlocProvider`).
+
+`BlocBuilder`  
+A widget that helps Re-Building the UI based on bloc state changes  
+
+You will want to wrap the smallest part of the widget that rebuilds.  
+The builder function can be called multiple times due to how the flutter engine works  
+
+The blob/cubit can be ommited & the instance will be searched via BlocProvider in the widget tree.
+```dart
+BlocBuilder<BlocA,BlocAState>(
+  //cubit: BlocProvider.of<>BlocA(context)
+  builder: (context, state) {
+    // return widget here based on BlocA's state
+  }
+)
+```
+The builder function must be a pure function that returns a widget in response to a state
+
+`pure function`  
+is a function where the return value depends only on the functions arguments
+```dart
+// this is a pure function
+int foo(int n) {
+  return n * 2;
+}
+
+// this is not a pure function
+int i = 42;
+int bar(int n) {
+  ++i;
+  return n* i;
+}
+```
+
+For more control over when the BlocProvider should rebuild you can provide the `buildWhen`
+```dart
+BlocBuilder<BlocA,BlocAState>(
+  //cubit: BlocProvider.of<>BlocA(context)
+  builder: (context, state) {
+    // return widget here based on BlocA's state
+  },
+  buildWhen: (previousState, state) {
+    // return true/false to determine wheter or not 
+    // to rebuild the widget with state
+  }
+)
+```
+
+
 
 ## Bloc Architecture
 - Presentation Layer
@@ -131,3 +233,6 @@ Visual Studio Code extension to explore and manager your Firebase
 
 
 ##Resources
+- [blocZeroToHero video](https://youtu.be/THCkkQ-V1-8)
+- [blocZeroToHero repos](https://github.com/TheWCKD/blocFromZeroToHero)
+- [Bloc 6.0 medium article](https://devmuaz.medium.com/cubit-has-been-merged-with-bloc-in-flutter-bloc-v6-0-0-42b80eb8a620)

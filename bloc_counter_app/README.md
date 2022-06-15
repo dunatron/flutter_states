@@ -229,6 +229,8 @@ BlocBuilder<BlocA,BlocAState>(
 )
 ```
 
+## `Bloc`
+
 ## Bloc Architecture
 
 - Presentation Layer
@@ -288,7 +290,7 @@ BlocBuilder<BlocA,BlocAState>(
 - Firebase Explorer `jsayol`  
   Visual Studio Code extension to explore and manager your Firebase
 
-##Resources
+## `Resources`
 
 - [blocZeroToHero video](https://youtu.be/THCkkQ-V1-8)
 - [blocZeroToHero repos](https://github.com/TheWCKD/blocFromZeroToHero)
